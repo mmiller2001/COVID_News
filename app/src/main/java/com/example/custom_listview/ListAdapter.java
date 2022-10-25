@@ -15,12 +15,12 @@ import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
-public class ListAdapter extends ArrayAdapter<User> {
+public class ListAdapter extends ArrayAdapter<News> {
 
 
-    public ListAdapter(Context context, ArrayList<User> userArrayList){
+    public ListAdapter(Context context, ArrayList<News> newsArrayList){
 
-        super(context,R.layout.list_item,userArrayList);
+        super(context,R.layout.list_item,newsArrayList);
 
     }
 
@@ -28,7 +28,7 @@ public class ListAdapter extends ArrayAdapter<User> {
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
 
-        User user = getItem(position);
+        News news = getItem(position);
 
         if (convertView == null){
 
@@ -42,9 +42,9 @@ public class ListAdapter extends ArrayAdapter<User> {
         TextView time = convertView.findViewById(R.id.msgtime);
 
         //imageView.setImageResource(user.imageId);
-        userName.setText(user.name);
-        lastMsg.setText(user.lastMessage);
-        time.setText(user.lastMsgTime);
+        userName.setText(news.title);
+        lastMsg.setText(news.excerpt);
+        time.setText(news.publishedDateTime);
 
 
         return convertView;

@@ -42,21 +42,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        ArrayList<User> userArrayList = new ArrayList<>();
 
-//        ActionBar actionBar = getSupportActionBar();
-//        actionBar.setDisplayHomeAsUpEnabled(true);
-
-        int[] imageId = {R.drawable.a,R.drawable.b,R.drawable.c,R.drawable.d,R.drawable.e,
-                R.drawable.f,R.drawable.g,R.drawable.h,R.drawable.i};
-        String[] name = {"Christopher","Craig","Sergio","Mubariz","Mike","Michael","Toa","Ivana","Alex"};
-        String[] lastMessage = {"Heye","Supp","Let's Catchup","Dinner tonight?","Gotta go",
-                "i'm in meeting","Gotcha","Let's Go","any Weekend Plans?"};
-        String[] lastmsgTime = {"8:45 pm","9:00 am","7:34 pm","6:32 am","5:76 am",
-                "5:00 am","7:34 pm","2:32 am","7:76 am"};
-        String[] phoneNo = {"7656610000","9999043232","7834354323","9876543211","5434432343",
-                "9439043232","7534354323","6545543211","7654432343"};
-        String[] country = {"United States","Russia","India","Israel","Germany","Thailand","Canada","France","Switzerland"};
+        ArrayList<News> newsArrayList = new ArrayList<>();
 //        ***************************************************
 //        API CALL
         OkHttpClient client = new OkHttpClient();
@@ -105,13 +92,21 @@ public class MainActivity extends AppCompatActivity {
                             String title = object.getString("title"); // name
                             int heat = object.getInt("heat");
                             String path = object.getString("path"); // last message
+                            String sourceUrl = object.getString("sourceUrl");
+                            String webUrl = object.getString("webUrl");
+                            String originalUrl = object.getString("originalUrl");
+                            String featuredContent = object.getString("featuredContent");
+                            String highlight = object.getString("highlight");
                             String locale = object.getString("locale"); // country
                             String ampWebUrl = object.getString("ampWebUrl"); // lastmsgTime
                             String time = object.getString("publishedDateTime"); // phoneNo
                             String excerpt = object.getString("excerpt");
 
+                            News news = new News(path,title,excerpt,sourceUrl,webUrl,originalUrl,featuredContent,highlight,publishedDateTime);
                             User user = new User(title,excerpt,publishedDateTime,time,ampWebUrl);//,imageId[i]);
-                            userArrayList.add(user);
+
+                            newsArrayList.add(news);
+                            //userArrayList.add(user);
 
                             locationComponents += "--" + title + ", " + heat + ", " + path + ", " + ampWebUrl + ", " + time + "\n\n";
                         }
@@ -125,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
                     MainActivity.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            ListAdapter listAdapter = new ListAdapter(MainActivity.this,userArrayList);
+                            ListAdapter listAdapter = new ListAdapter(MainActivity.this,newsArrayList);
 
                             binding.listview.setAdapter(listAdapter);
                             binding.listview.setClickable(true);
@@ -133,26 +128,26 @@ public class MainActivity extends AppCompatActivity {
                                 @Override
                                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                                    User user = userArrayList.get(position);
+                                    //User user = userArrayList.get(position);
+                                    News news = newsArrayList.get(position);
 
-                                    String phone = user.phoneNo;
-                                    SimpleDateFormat inFormat = new SimpleDateFormat("yyyy-mm-dd");
-                                    Date dtIn = null;
-                                    try {
-                                        dtIn = inFormat.parse(phone);
-                                    } catch (ParseException e) {
-                                        e.printStackTrace();
-                                    }
-                                    SimpleDateFormat inFormat2 = new SimpleDateFormat("yyyy-mm-dd");
-                                    phone = inFormat2.format(dtIn);
+//                                    String phone = user.phoneNo;
+//                                    SimpleDateFormat inFormat = new SimpleDateFormat("yyyy-mm-dd");
+//                                    Date dtIn = null;
+//                                    try {
+//                                        dtIn = inFormat.parse(phone);
+//                                    } catch (ParseException e) {
+//                                        e.printStackTrace();
+//                                    }
+//                                    SimpleDateFormat inFormat2 = new SimpleDateFormat("yyyy-mm-dd");
+//                                    phone = inFormat2.format(dtIn);
 
                                     Intent i = new Intent(MainActivity.this,UserActivity.class);
-                                    i.putExtra("name",user.name);
-                                    i.putExtra("phone",phone);
-                                    i.putExtra("country",user.lastMessage);
+                                    i.putExtra("name",news.title);
+                                    i.putExtra("phone",news.publishedDateTime);
+                                    i.putExtra("country",news.excerpt);
                                     //i.putExtra("imageid",imageId[position]);
                                     startActivity(i);
-
                                 }
                             });
                         }
@@ -161,16 +156,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
-//    @Override
-//    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-//        switch (item.getItemId()) {
-//            case android.R.id.home:
-//                this.finish();
-//                return true;
-//        }
-//        return super.onOptionsItemSelected(item);
-//    }
 
     private Drawable LoadImageFromWebOperations(String urlImage) {
         try {
